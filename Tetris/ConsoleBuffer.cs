@@ -13,13 +13,13 @@
         buffer = new char[width * height];
     }
 
-    public void ClearBuffer(char clearCharacter = ' ')
+    public void ClearBuffer()
     {
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
-                buffer[y * width + x] = clearCharacter;
+                buffer[y * width + x] = ' ';
             }
         }
     }

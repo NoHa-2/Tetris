@@ -9,18 +9,31 @@ namespace Program
         static readonly int endBorderX = 41;
         static readonly int startingBorderY = 5;
         static readonly int endBorderY = 25;
+
+        /*
+        static readonly int gameBufferWidth = 12;
+        static readonly int gameBufferHeight = 22;
+        private static char[] gameBuffer;
+        */
         static void Main(string[] args)
         {
+            /*
+            gameBuffer = new char[gameBufferWidth * gameBufferHeight];
+            for (int y = 0; y < gameBufferHeight; y++)
+            {
+                for (int x = 0; x < gameBufferWidth; x++)
+                {
+                    gameBuffer[y * gameBufferWidth + x] = 'i';
+                }
+            }
+            */
             Console.CursorVisible = false;
             ConsoleBuffer.frameBuffer.ClearBuffer();
             Tetrominos.GetNextTetromino();
             Tetrominos.GetCurrentTetromino();
-            Tetrominos.DrawTetromino();
+
+
             DrawBorder();
-
-
-
-
 
             ConsoleBuffer.frameBuffer.Draw();
             Console.Read();
@@ -41,5 +54,17 @@ namespace Program
                 ConsoleBuffer.frameBuffer.WriteCharToBuffer('#', startingBorderX + i, endBorderY);
             }
         }
+        /*
+        public static void UpdateFrameBuffer()
+        {
+            for (int y = 0; y < gameBufferHeight; y++)
+            {
+                for (int x = 0; x < gameBufferWidth; x++)
+                {
+                    ConsoleBuffer.frameBuffer.WriteCharToBuffer(gameBuffer[y * gameBufferWidth + x], startingBorderX + x, startingBorderY + y);
+                }
+            }
+        }
+        */
     }
 }
