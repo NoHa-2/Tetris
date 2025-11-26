@@ -31,7 +31,14 @@ namespace Program
             ConsoleBuffer.frameBuffer.ClearBuffer();
             Tetrominos.GetNextTetromino();
             Tetrominos.GetCurrentTetromino();
+            while (true)
+            {
+                Thread.Sleep(500);
+                Tetrominos.CurrentTetrominoFallingMovement();
+                ConsoleBuffer.frameBuffer.Draw();
 
+            }
+           
 
             DrawBorder();
 
