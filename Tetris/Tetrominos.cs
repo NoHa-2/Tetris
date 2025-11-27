@@ -13,18 +13,9 @@ namespace Tetris
         private static readonly int tetrominoSpawnX = 35;
         private static readonly int tetrominoSpawnY = 5;
 
-        //current tetromino coords
-        /*
-        public int currentTetrominoBlock1X {  get; set; }
-        public int currentTetrominoBlock1Y { get; set; }
-        public int currentTetrominoBlock2X { get; set; }
-        public int currentTetrominoBlock2Y { get; set; }
-        public int currentTetrominoBlock3X { get; set; }
-        public int currentTetrominoBlock3Y { get; set; }
-        public int currentTetrominoBlock4X { get; set; }
-        public int currentTetrominoBlock4y { get; set; }
-        */
-        public static int[,] currentTetrominoCoords = new int[4, 2];
+        public static int[,] currentTetrominoCoords { get; set; } = new int[4, 2]; // array holds 4 sets of 2 coordinate values
+        private static readonly int currentTetrominoXCoordIndex = 0;
+        private static readonly int currentTetrominoYCoordIndex = 1;
 
         // tetrominos
         private static char[,] shapeO = { {'X', 'X' }, {'X', 'X' } };
@@ -35,62 +26,62 @@ namespace Tetris
         private static char[,] shapeS = { {' ', 'X', 'X' }, {'X', 'X', ' ' } };
         private static char[,] shapeI = { { 'X', 'X', 'X', 'X' } };
 
-        public static char[,] nextTetromino { get; set; }
-        public static char[,] currentTetromino { get; set; }
-        public static List<char[,]> TetrominoBag = new() { shapeO, shapeZ, shapeL, shapeJ, shapeT, shapeS, shapeI };
+        private static char[,] nextTetromino { get; set; }
+        private static char[,] currentTetromino { get; set; }
+        public static readonly List<char[,]> TetrominoBag = new() { shapeO, shapeZ, shapeL, shapeJ, shapeT, shapeS, shapeI };
 
         public static void GetNextTetromino()
         {
-            int randomint = rnd.Next(0,6);
+            int randomint = rnd.Next(0,7);
             nextTetromino = TetrominoBag[randomint];
         }
-        public static void GetCurrentTetromino()
+        public static void GetNewCurrentTetromino()
         {
+            GetNextTetromino();
             currentTetromino = nextTetromino;
-  
-            int TetrominoAmountOfRows = currentTetromino.GetLength(0);
-            int TetrominoRowLength = currentTetromino.GetLength(1);
             int BlocksPrinted = 0;
-            for (int i = 0; i < TetrominoAmountOfRows; i++)
+            for (int i = 0; i < currentTetromino.GetLength(0); i++)
             {
-                for (int j = 0; j < TetrominoRowLength; j++)
+                for (int j = 0; j < currentTetromino.GetLength(1); j++)
                 {
-                    if (i == 0)
-                    {
-                        ConsoleBuffer.frameBuffer.WriteCharToBuffer(currentTetromino[i, j], tetrominoSpawnX + j, tetrominoSpawnY);
-                        if (currentTetromino[i, j] == 'X')
-                        {
-                            currentTetrominoCoords[BlocksPrinted, 0] = tetrominoSpawnX + j;
-                            currentTetrominoCoords[BlocksPrinted, 1] = tetrominoSpawnY;
-                            BlocksPrinted++;
-                        }
-                    }
-                    else
+                    if (currentTetromino[i, j] == 'X')
                     {
                         ConsoleBuffer.frameBuffer.WriteCharToBuffer(currentTetromino[i, j], tetrominoSpawnX + j, tetrominoSpawnY + i);
-                        if (currentTetromino[i, j] == 'X')
-                        {
-                            currentTetrominoCoords[BlocksPrinted, 0] = tetrominoSpawnX + j;
-                            currentTetrominoCoords[BlocksPrinted, 1] = tetrominoSpawnY;
-                            BlocksPrinted++;
-                        }
+                        currentTetrominoCoords[BlocksPrinted, currentTetrominoXCoordIndex] = tetrominoSpawnX + j;
+                        currentTetrominoCoords[BlocksPrinted, currentTetrominoYCoordIndex] = tetrominoSpawnY + i;
+                        BlocksPrinted++;
                     }
                 }
             }
-            /*
+        }
+
+        public static void DrawCurrentTetromino()
+        {
             for (int i = 0; i < currentTetrominoCoords.GetLength(0); i++)
             {
                 for (int j = 0; j < currentTetrominoCoords.GetLength(1); j++)
                 {
-                    Console.WriteLine(currentTetrominoCoords[i, j]);
+                    ConsoleBuffer.frameBuffer.WriteCharToBuffer('X', currentTetrominoCoords[i, currentTetrominoXCoordIndex], currentTetrominoCoords[i, currentTetrominoYCoordIndex]);
                 }
             }
-            Console.Read();
-            */
         }
-        public static void TetrominoMovement()
+
+        public static void CurrentTetrominoFallingMovement()
         {
-            
+            ClearPreviousTetrominoPosition();
+            for (int i = 0; i < currentTetrominoCoords.GetLength(0); i++)
+            {
+                currentTetrominoCoords[i, currentTetrominoYCoordIndex]++;
+            }
+            DrawCurrentTetromino();
+        }
+
+        public static void ClearPreviousTetrominoPosition()
+        {
+            for (int i = 0; i < currentTetrominoCoords.GetLength(0); i++)
+            {
+                ConsoleBuffer.frameBuffer.WriteCharToBuffer(' ', currentTetrominoCoords[i, currentTetrominoXCoordIndex], currentTetrominoCoords[i, currentTetrominoYCoordIndex]);
+            }
         }
     }
 }
