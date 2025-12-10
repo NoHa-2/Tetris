@@ -16,6 +16,7 @@ namespace Program
             
             Console.CursorVisible = false;
             ConsoleBuffer.frameBuffer.ClearBuffer();
+            
             DrawBorder();
             Tetrominos.GetNewCurrentTetromino();
             ConsoleBuffer.frameBuffer.Draw();
@@ -30,8 +31,9 @@ namespace Program
             // game logic
 
             // display stuff
+            
         }
-        public static void DrawBorder()
+        private static void DrawBorder()
         {
             for (int i = 0; i < 21; i++)
             {

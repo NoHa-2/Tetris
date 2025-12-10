@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,22 +14,24 @@ namespace Tetris
         private static readonly int tetrominoSpawnX = 35;
         private static readonly int tetrominoSpawnY = 5;
 
-        public static int[,] currentTetrominoCoords { get; set; } = new int[4, 2]; // array holds 4 sets of 2 coordinate values
+        private static int[,] currentTetrominoCoords { get; set; } = new int[4, 2]; // array holds 4 sets of 2 coordinate values
         private static readonly int currentTetrominoXCoordIndex = 0;
         private static readonly int currentTetrominoYCoordIndex = 1;
 
         // tetrominos
-        private static char[,] shapeO = { {'X', 'X' }, {'X', 'X' } };
-        private static char[,] shapeZ = { {'X', 'X', ' '}, {' ', 'X', 'X' } };
-        private static char[,] shapeL = { {' ', ' ', 'X' }, {'X', 'X', 'X' } };
-        private static char[,] shapeJ = { {'X', ' ', ' ',}, {'X', 'X', 'X',} };
-        private static char[,] shapeT = { {' ','X',' '}, {'X', 'X', 'X' } };
-        private static char[,] shapeS = { {' ', 'X', 'X' }, {'X', 'X', ' ' } };
-        private static char[,] shapeI = { { 'X', 'X', 'X', 'X' } };
+        private static int[,] shapeO = { {1, 1}, {1, 1} };
+        private static int[,] shapeZ = { {1, 1, 0}, {0, 1, 1} };
+        private static int[,] shapeL = { {0, 0, 1}, {1, 1, 1} };
+        private static int[,] shapeJ = { {1, 0, 0}, {1, 1, 1} };
+        private static int[,] shapeT = { {0, 1, 0}, {1, 1, 1} };
+        private static int[,] shapeS = { {0, 1, 1}, {1, 1, 0} };
+        private static int[,] shapeI = { {1, 1, 1, 1} };
 
-        private static char[,] nextTetromino { get; set; }
-        private static char[,] currentTetromino { get; set; }
-        public static readonly List<char[,]> TetrominoBag = new() { shapeO, shapeZ, shapeL, shapeJ, shapeT, shapeS, shapeI };
+        private static int[,] nextTetromino { get; set; }
+        private static int[,] currentTetromino { get; set; }
+        private static readonly List<int[,]> TetrominoBag = new() { shapeO, shapeZ, shapeL, shapeJ, shapeT, shapeS, shapeI };
+
+        private static int CurrentTetrominoRotationAxis;
 
         public static void GetNextTetromino()
         {
@@ -44,9 +47,9 @@ namespace Tetris
             {
                 for (int j = 0; j < currentTetromino.GetLength(1); j++)
                 {
-                    if (currentTetromino[i, j] == 'X')
+                    if (currentTetromino[i, j] == 1)
                     {
-                        ConsoleBuffer.frameBuffer.WriteCharToBuffer(currentTetromino[i, j], tetrominoSpawnX + j, tetrominoSpawnY + i);
+                        ConsoleBuffer.frameBuffer.WriteCharToBuffer('X', tetrominoSpawnX + j, tetrominoSpawnY + i);
                         currentTetrominoCoords[BlocksPrinted, currentTetrominoXCoordIndex] = tetrominoSpawnX + j;
                         currentTetrominoCoords[BlocksPrinted, currentTetrominoYCoordIndex] = tetrominoSpawnY + i;
                         BlocksPrinted++;
@@ -57,6 +60,7 @@ namespace Tetris
 
         public static void DrawCurrentTetromino()
         {
+
             for (int i = 0; i < currentTetrominoCoords.GetLength(0); i++)
             {
                 for (int j = 0; j < currentTetrominoCoords.GetLength(1); j++)
@@ -82,6 +86,17 @@ namespace Tetris
             {
                 ConsoleBuffer.frameBuffer.WriteCharToBuffer(' ', currentTetrominoCoords[i, currentTetrominoXCoordIndex], currentTetrominoCoords[i, currentTetrominoYCoordIndex]);
             }
+        }
+
+        public static void RotateCurrentTetromino()
+        {
+           
+        }
+
+        public static bool CheckYCoordCollision()
+        {
+
+            return true;
         }
     }
 }
