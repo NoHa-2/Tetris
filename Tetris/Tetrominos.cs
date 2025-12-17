@@ -11,29 +11,53 @@ namespace Tetris
     {
         private static Random rnd = new Random();
 
-        private static readonly int tetrominoSpawnX = 35;
-        private static readonly int tetrominoSpawnY = 5;
-
-        private static int[,] currentTetrominoCoords { get; set; } = new int[4, 2]; // array holds 4 sets of 2 coordinate values
-        private static readonly int currentTetrominoXCoordIndex = 0;
-        private static readonly int currentTetrominoYCoordIndex = 1;
+        private static readonly int tetrominoSpawnX = 55;
+        private static readonly int tetrominoSpawnY = 12;
+        private static int tetrominoXcoord = tetrominoSpawnX;
+        private static int tetrominoYcoord = tetrominoSpawnY;
 
         // tetrominos
-        private static int[,] shapeO = { {1, 1}, {1, 1} };
-        private static int[,] shapeZ = { {1, 1, 0}, {0, 1, 1} };
-        private static int[,] shapeL = { {0, 0, 1}, {1, 1, 1} };
-        private static int[,] shapeJ = { {1, 0, 0}, {1, 1, 1} };
-        private static int[,] shapeT = { {0, 1, 0}, {1, 1, 1} };
-        private static int[,] shapeS = { {0, 1, 1}, {1, 1, 0} };
-        private static int[,] shapeI = { {1, 1, 1, 1} };
+        private static int[,] shapeO = { 
+            {1, 1}, 
+            {1, 1},
+        };
+        private static int[,] shapeZ = { 
+            {1, 1, 0}, 
+            {0, 1, 1},
+            {0, 0, 0}
+        };
+        private static int[,] shapeL = { 
+            {0, 0, 1}, 
+            {1, 1, 1},
+            {0, 0, 0}
+        };
+        private static int[,] shapeJ = { 
+            {1, 0, 0}, 
+            {1, 1, 1},
+            {0, 0, 0}
+        };
+        private static int[,] shapeT = { 
+            {0, 1, 0}, 
+            {1, 1, 1},
+            {0, 0, 0}
+        };
+        private static int[,] shapeS = { 
+            {0, 1, 1}, 
+            {1, 1, 0},
+            {0, 0, 0}
+        };
+        private static int[,] shapeI = {
+            {0, 0, 0, 0},
+            {1, 1, 1, 1},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0}
+        };
 
         private static int[,] nextTetromino { get; set; }
         private static int[,] currentTetromino { get; set; }
         private static readonly List<int[,]> TetrominoBag = new() { shapeO, shapeZ, shapeL, shapeJ, shapeT, shapeS, shapeI };
 
-        private static int CurrentTetrominoRotationAxis;
-
-        public static void GetNextTetromino()
+        private static void GetNextTetromino()
         {
             int randomint = rnd.Next(0,7);
             nextTetromino = TetrominoBag[randomint];
@@ -42,61 +66,77 @@ namespace Tetris
         {
             GetNextTetromino();
             currentTetromino = nextTetromino;
-            int BlocksPrinted = 0;
+            DrawTetromino();
+        }
+
+        public static void DrawTetromino()
+        {
             for (int i = 0; i < currentTetromino.GetLength(0); i++)
             {
                 for (int j = 0; j < currentTetromino.GetLength(1); j++)
                 {
                     if (currentTetromino[i, j] == 1)
                     {
-                        ConsoleBuffer.frameBuffer.WriteCharToBuffer('X', tetrominoSpawnX + j, tetrominoSpawnY + i);
-                        currentTetrominoCoords[BlocksPrinted, currentTetrominoXCoordIndex] = tetrominoSpawnX + j;
-                        currentTetrominoCoords[BlocksPrinted, currentTetrominoYCoordIndex] = tetrominoSpawnY + i;
-                        BlocksPrinted++;
+                        ConsoleBuffer.frameBuffer.WriteCharToBuffer('X', tetrominoXcoord + j, tetrominoYcoord + i);
                     }
                 }
             }
         }
 
-        public static void DrawCurrentTetromino()
+        public static void ClearTetrominoPosition()
         {
-
-            for (int i = 0; i < currentTetrominoCoords.GetLength(0); i++)
+            for (int i = 0; i < currentTetromino.GetLength(0); i++)
             {
-                for (int j = 0; j < currentTetrominoCoords.GetLength(1); j++)
+                for (int j = 0; j < currentTetromino.GetLength(1); j++)
                 {
-                    ConsoleBuffer.frameBuffer.WriteCharToBuffer('X', currentTetrominoCoords[i, currentTetrominoXCoordIndex], currentTetrominoCoords[i, currentTetrominoYCoordIndex]);
+                    ConsoleBuffer.frameBuffer.WriteCharToBuffer(' ', tetrominoXcoord + j, tetrominoYcoord + i);
                 }
             }
         }
 
-        public static void CurrentTetrominoFallingMovement()
+        public static void TetrominoFallingMovement()
         {
-            ClearPreviousTetrominoPosition();
-            for (int i = 0; i < currentTetrominoCoords.GetLength(0); i++)
-            {
-                currentTetrominoCoords[i, currentTetrominoYCoordIndex]++;
-            }
-            DrawCurrentTetromino();
+            ClearTetrominoPosition();
+            tetrominoYcoord++;
+            DrawTetromino();
         }
-
-        public static void ClearPreviousTetrominoPosition()
-        {
-            for (int i = 0; i < currentTetrominoCoords.GetLength(0); i++)
-            {
-                ConsoleBuffer.frameBuffer.WriteCharToBuffer(' ', currentTetrominoCoords[i, currentTetrominoXCoordIndex], currentTetrominoCoords[i, currentTetrominoYCoordIndex]);
-            }
-        }
+        
 
         public static void RotateCurrentTetromino()
         {
-           
+            ClearTetrominoPosition();
+            currentTetromino = TransposeMatrix(currentTetromino);
+
+            int rowCount = currentTetromino.GetLength(0);
+            int colCount = currentTetromino.GetLength(1);
+            for (int row = 0; row < rowCount; row++)
+            {
+                for (int col = 0; col < colCount / 2; col++)
+                {
+                    int Temp = currentTetromino[row, col];
+                    currentTetromino[row, col] = currentTetromino[row, rowCount - col - 1];
+                    currentTetromino[row, rowCount - col - 1] = Temp;
+                }
+            }
+            DrawTetromino();
         }
 
-        public static bool CheckYCoordCollision()
+        private static int[,] TransposeMatrix(int[,] matrix)
         {
+            int w = matrix.GetLength(0);
+            int h = matrix.GetLength(1);
 
-            return true;
+            int[,] result = new int[h, w];
+
+            for (int i = 0; i < w; i++)
+            {
+                for (int j = 0; j < h; j++)
+                {
+                    result[j, i] = matrix[i, j];
+                }
+            }
+
+            return result;
         }
     }
 }
