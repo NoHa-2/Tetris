@@ -11,27 +11,45 @@ namespace Program
         static readonly int endBorderY = 25;
         static int DelayMilliSeconds = 1000;
 
+        static ConsoleKey KeyPress;
+
         static void Main(string[] args)
         {
-            
             Console.CursorVisible = false;
             ConsoleBuffer.frameBuffer.ClearBuffer();
             
-            DrawBorder();
             Tetrominos.GetNewCurrentTetromino();
             ConsoleBuffer.frameBuffer.Draw();
 
             while (true)
             {
-                Thread.Sleep(DelayMilliSeconds);
-                Tetrominos.CurrentTetrominoFallingMovement();
+                if (Console.KeyAvailable)
+                {
+                    KeyPress = Console.ReadKey(true).Key;
+                    InputHandler();
+                }
+
                 ConsoleBuffer.frameBuffer.Draw();
+                Thread.Sleep(DelayMilliSeconds);
+                Tetrominos.TetrominoFallingMovement();
             }
 
-            // game logic
-
-            // display stuff
             
+            
+            
+
+            
+
+        }
+
+        private static void InputHandler()
+        {
+            switch(KeyPress)
+            {
+                case ConsoleKey.UpArrow:
+                    Tetrominos.RotateCurrentTetromino();
+                    break;
+            }
         }
         private static void DrawBorder()
         {
