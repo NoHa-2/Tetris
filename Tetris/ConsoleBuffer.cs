@@ -2,7 +2,7 @@
 {
     public int width { get; }
     public int height { get; }
-    private char[] buffer;
+    internal char[] buffer;
     public static ConsoleBuffer frameBuffer = new();
 
     public ConsoleBuffer()

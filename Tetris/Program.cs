@@ -12,12 +12,14 @@ namespace Program
         static int DelayMilliSeconds = 1000;
 
         static ConsoleKey KeyPress;
-
+ 
         static void Main(string[] args)
         {
             Console.CursorVisible = false;
             ConsoleBuffer.frameBuffer.ClearBuffer();
-            
+
+            DrawBorder();
+
             Tetrominos.GetNewCurrentTetromino();
             ConsoleBuffer.frameBuffer.Draw();
 
@@ -33,21 +35,25 @@ namespace Program
                 Thread.Sleep(DelayMilliSeconds);
                 Tetrominos.TetrominoFallingMovement();
             }
-
-            
-            
-            
-
-            
-
         }
 
         private static void InputHandler()
         {
+            int Direction;
             switch(KeyPress)
             {
                 case ConsoleKey.UpArrow:
+                    // if (Tetrominos.CheckCollision())
                     Tetrominos.RotateCurrentTetromino();
+                    break;
+                case ConsoleKey.RightArrow:
+                    Tetrominos.TetrominoMoveRight();
+                    break;
+                case ConsoleKey.LeftArrow:
+                    Tetrominos.TetrominoMoveLeft();
+                    break;
+                case ConsoleKey.DownArrow:
+                    Tetrominos.TetrominoFallingMovement();
                     break;
             }
         }
