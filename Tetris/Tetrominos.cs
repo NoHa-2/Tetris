@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -7,14 +8,15 @@ using System.Threading.Tasks;
 
 namespace Tetris
 {
-    class Tetrominos
+    static class Tetrominos
     {
         private static Random rnd = new Random();
 
-        private static readonly int tetrominoSpawnX = 55;
-        private static readonly int tetrominoSpawnY = 12;
+        private static readonly int tetrominoSpawnX = 35;
+        private static readonly int tetrominoSpawnY = 4;
         private static int tetrominoXcoord = tetrominoSpawnX;
         private static int tetrominoYcoord = tetrominoSpawnY;
+        private static int Direction;
 
         // tetrominos
         private static int[,] shapeO = { 
@@ -89,19 +91,47 @@ namespace Tetris
             {
                 for (int j = 0; j < currentTetromino.GetLength(1); j++)
                 {
-                    ConsoleBuffer.frameBuffer.WriteCharToBuffer(' ', tetrominoXcoord + j, tetrominoYcoord + i);
+                    if (currentTetromino[i, j] == 1)
+                    {
+                        ConsoleBuffer.frameBuffer.WriteCharToBuffer(' ', tetrominoXcoord + j, tetrominoYcoord + i);
+                    }
                 }
             }
         }
 
         public static void TetrominoFallingMovement()
         {
-            ClearTetrominoPosition();
-            tetrominoYcoord++;
-            DrawTetromino();
+            Direction = 3;
+            if (CheckCollision(Direction))
+            {
+                ClearTetrominoPosition();
+                tetrominoYcoord++;
+                DrawTetromino();
+            }
+        }
+
+        public static void TetrominoMoveRight()
+        {
+            Direction = 1;
+            if (CheckCollision(Direction))
+            {
+                ClearTetrominoPosition();
+                tetrominoXcoord++;
+                DrawTetromino();
+            }
+        }
+
+        public static void TetrominoMoveLeft()
+        {
+            Direction= 2;
+            if (CheckCollision(Direction))
+            {
+                ClearTetrominoPosition();
+                tetrominoXcoord--;
+                DrawTetromino();
+            }
         }
         
-
         public static void RotateCurrentTetromino()
         {
             ClearTetrominoPosition();
@@ -119,6 +149,39 @@ namespace Tetris
                 }
             }
             DrawTetromino();
+        }
+
+        public static bool CheckCollision(int Direction)
+        {
+            bool Invalid = false;
+            int TempXcoord = tetrominoXcoord;
+            int TempYcoord = tetrominoYcoord;
+            switch (Direction)
+            {
+                case 1:
+                    TempXcoord++;
+                    break;
+                case 2:
+                    TempXcoord--;
+                    break;
+                case 3:
+                    TempYcoord++;
+                    break;
+            }
+
+            ClearTetrominoPosition();
+            for (int i = 0; i < currentTetromino.GetLength(0); i++)
+            {
+                for (int j = 0; j < currentTetromino.GetLength(1); j++)
+                {
+                    if (currentTetromino[i, j] == 1 && ConsoleBuffer.frameBuffer.buffer[(TempYcoord + i) * ConsoleBuffer.frameBuffer.width + (TempXcoord + j)] != ' ')
+                    {
+                        DrawTetromino();
+                        return Invalid;
+                    }
+                }
+            }
+            return !Invalid;
         }
 
         private static int[,] TransposeMatrix(int[,] matrix)
